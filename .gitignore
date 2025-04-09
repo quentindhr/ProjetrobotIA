@@ -8,6 +8,7 @@
 test.mp3
 /vosk-model-fr
 S2T_Vosk.py
+test.py
 
 # Fichiers de configuration
 /.env.local
