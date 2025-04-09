@@ -7,6 +7,7 @@
 .DS_Store
 test.mp3
 /vosk-model-fr
+S2T_Vosk.py
 
 # Fichiers de configuration
 /.env.local

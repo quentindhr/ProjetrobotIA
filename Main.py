@@ -2,6 +2,8 @@ import vosk
 import sounddevice as sd
 import json
 
+SEUIL_MINIMUM_VOIX=50
+
 # Initialisation du modèle Vosk (FR)
 model = vosk.Model("vosk-model-fr")
 rec = vosk.KaldiRecognizer(model, 16000)
@@ -33,7 +35,32 @@ def detect_trigger_word(device_index=1):
             sd.sleep(100)
     return True
 
+def audioRec():
+    sample_rate = 16000
+    duration = 30  # Durée d'enregistrement en secondes
+    audio = sd.rec(int(duration * sample_rate), samplerate=sample_rate, channels=1)
+    sd.wait()  # Attendre la fin de l'enregistrement
+
+    return audio
+
+def isSilence(audio):
+    # Vérifier si le volume moyen est inférieur au seuil minimum
+    volume_moyen = audio.mean()
+    if volume_moyen < SEUIL_MINIMUM_VOIX:
+        print(volume_moyen)
+        return True
+    else:
+        print(volume_moyen)
+        return False
+
+
+
+
+
 # Exemple d'utilisation dans le main
 if __name__ == "__main__":
     if detect_trigger_word():
-        print("Le mot 'robot' a été détecté !")
+        audio = audioRec()
+        while not isSilence(audio):
+            print("silence")
+            audio = audioRec()
