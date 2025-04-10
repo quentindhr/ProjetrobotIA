@@ -54,11 +54,9 @@ def isSilence(audio):
     return volume_moyen < SEUIL_MINIMUM_VOIX
 
 def ProgressRec():
-    # Fonction pour afficher une barre de progression
     for i in tqdm(range(50), desc="Enregistrement en cours", unit="%", ncols=100):
-        time.sleep(0.1)  # Simuler le temps d'enregistrement
+        time.sleep(0.1)  
 
-# Exemple d'utilisation dans le main
 if __name__ == "__main__":
     if detect_trigger_word():
         print("Je vous écoute...")
