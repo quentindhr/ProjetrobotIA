@@ -2,9 +2,12 @@ import vosk
 import sounddevice as sd
 import json
 import numpy as np
+from tqdm import tqdm
+import time
+from SpeechToText import speech_to_text
 
 SEUIL_MINIMUM_VOIX = 50
-DEVICE_INDEX = 1 # Index du microphone à utiliser 1 pour le MAC
+DEVICE_INDEX = 0 # Index du microphone à utiliser 1 pour le MAC
 
 # Initialisation du modèle Vosk (FR)
 model = vosk.Model("vosk-model-fr")
@@ -37,7 +40,8 @@ def detect_trigger_word():
             sd.sleep(100)
     return True
 
-def audioRec(duration=30):
+def audioRec(duration=5):
+    ProgressRec()
     sample_rate = 16000
     audio = sd.rec(int(duration * sample_rate), samplerate=sample_rate, channels=1, dtype='int16',device=DEVICE_INDEX)
     sd.wait()  # Attendre la fin de l'enregistrement
@@ -49,11 +53,24 @@ def isSilence(audio):
     print(f"Volume moyen : {volume_moyen}")
     return volume_moyen < SEUIL_MINIMUM_VOIX
 
+def ProgressRec():
+    # Fonction pour afficher une barre de progression
+    for i in tqdm(range(50), desc="Enregistrement en cours", unit="%", ncols=100):
+        time.sleep(0.1)  # Simuler le temps d'enregistrement
+
 # Exemple d'utilisation dans le main
 if __name__ == "__main__":
     if detect_trigger_word():
+        print("Je vous écoute...")
+        audio_list = []
         audio = audioRec()
+        text = speech_to_text(audio)
+        print(text)
         while not isSilence(audio):
-            print("Enregistrement en cours...")
+            audio_list.append(audio)
             audio = audioRec()
-        print("Silence détecté. Arrêt de l'enregistrement.")
+        
+        #for audio in audio_list:
+            #text = speech_to_text(audio)
+            #print(text)
+        
