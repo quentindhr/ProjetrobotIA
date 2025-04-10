@@ -8,10 +8,10 @@ from SpeechToText import *  # tu réutilises ta fonction optimisée ici
 
 
 SAMPLERATE = 16000
-BLOCK_DURATION = 2  # en secondes
+BLOCK_DURATION = 0.5  # en secondes
 BLOCK_SIZE = int(SAMPLERATE * BLOCK_DURATION)
 CHANNELS = 1
-BUFFER_LENGTH = 5  # Nombre de blocs conservés dans le buffer circulaire
+BUFFER_LENGTH = 8  # Nombre de blocs conservés dans le buffer circulaire
 
 DEVICE = 0  # ID de l'appareil d'entrée audio 
 

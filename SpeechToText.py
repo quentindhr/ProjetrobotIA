@@ -26,11 +26,15 @@ def speech_to_text(audio_data):
     return result.text
 
 def detect_trigger_word(buffer_queue):
+    if not is_speech_present(audio_data):
+        return False
+    
     mel = preprocess_audio_from_buffer(buffer_queue)
     result = model.decode(mel, whisper.DecodingOptions(fp16=False))
     transcription = result.text.lower()
     print("Transcription (buffer) :", transcription)
     return any(word in transcription for word in TRIGGER_WORDS)
+
 
 def preprocess_audio_from_buffer(buffer_queue):
     audio_data = np.concatenate(list(buffer_queue.queue)).astype(np.float32) / 32768.0
@@ -38,3 +42,7 @@ def preprocess_audio_from_buffer(buffer_queue):
     audio_tensor = whisper.pad_or_trim(audio_tensor)
     mel = whisper.log_mel_spectrogram(audio_tensor).to(model.device)
     return mel
+
+def is_speech_present(audio_data, threshold=500):
+    volume = np.abs(audio_data).mean()
+    return volume > threshold
