@@ -2,17 +2,19 @@ import whisper
 import numpy as np
 import torch
 
+model = whisper.load_model("small")
+TRIGGER_WORDS = ["robot", "assistant", "aimigos"]
+
 def speech_to_text(audio_data):
     model = whisper.load_model("small")
 
-    # Convertir le tableau numpy en tenseur audio au bon format
+
     if isinstance(audio_data, np.ndarray):
-        audio = audio_data.flatten().astype(np.float32) / 32768.0  # Conversion int16 -> float32 normalisé entre -1 et 1
+        audio = audio_data.flatten().astype(np.float32) / 32768.0  
         audio_tensor = torch.tensor(audio)
     else:
         raise ValueError("Le format de l'audio n'est pas reconnu (attendu: np.ndarray)")
 
-    # Prétraitement pour Whisper
     audio_tensor = whisper.pad_or_trim(audio_tensor)
     mel = whisper.log_mel_spectrogram(audio_tensor).to(model.device)
 
@@ -22,3 +24,17 @@ def speech_to_text(audio_data):
     result = whisper.decode(model, mel, options)
 
     return result.text
+
+def detect_trigger_word(buffer_queue):
+    mel = preprocess_audio_from_buffer(buffer_queue)
+    result = model.decode(mel, whisper.DecodingOptions(fp16=False))
+    transcription = result.text.lower()
+    print("Transcription (buffer) :", transcription)
+    return any(word in transcription for word in TRIGGER_WORDS)
+
+def preprocess_audio_from_buffer(buffer_queue):
+    audio_data = np.concatenate(list(buffer_queue.queue)).astype(np.float32) / 32768.0
+    audio_tensor = torch.tensor(audio_data)
+    audio_tensor = whisper.pad_or_trim(audio_tensor)
+    mel = whisper.log_mel_spectrogram(audio_tensor).to(model.device)
+    return mel
