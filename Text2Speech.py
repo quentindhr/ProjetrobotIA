@@ -14,10 +14,13 @@ def _speech_loop():
         engine.runAndWait()
         speech_queue.task_done()
 
-# Lancer le thread au démarrage
+# Lance le thread au démarrage
 speech_thread = threading.Thread(target=_speech_loop, daemon=True)
 speech_thread.start()
 
 def speak(text):
-    """Ajoute du texte à la file de synthèse vocale."""
     speech_queue.put(text)
+
+def stop_speech_loop():
+    speech_queue.put(None)
+    speech_thread.join()  

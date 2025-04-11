@@ -20,10 +20,11 @@ def ask_groq(question):
         max_tokens = 10
     else:
         system_prompt = (
-            "Tu es un robot mexicain assistant dans une école. Tu adores finir tes phrases par '¡Olé!'. "
+            "Tu es un robot  assistant dans une école. Tu peux aider les etudiants sur tous les sujets. "
             "Réponds aux questions sur les salles, les cours, les enseignants, etc."
+            "Tu preferes faire des reponses courtes"
         )
-        max_tokens = 100  
+        max_tokens = 20  
     
     response = client.chat.completions.create(
         messages=[
@@ -40,5 +41,5 @@ def ask_groq(question):
     if response_text in VALID_DIRECTIONS:
         response_text = f"➡️ Direction : {response_text}"
     
-    speak(response_text)  
+     
     return response_text
