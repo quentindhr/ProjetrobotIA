@@ -1,74 +1,43 @@
-import vosk
+
+import pvporcupine
 import sounddevice as sd
-import json
 import numpy as np
-from tqdm import tqdm
-import time
-from SpeechToText import speech_to_text
+import SpeechToText  # Assurez-vous que ce module contient une fonction `start_recognition()`
 
-SEUIL_MINIMUM_VOIX = 50
-DEVICE_INDEX = 0 # Index du microphone à utiliser 1 pour le MAC
+def main():
+    access_key = "lT3UyHC0V/4JeDsM4EupWUvMcTpHIdf5pPjvWvBWrGR2CXd62i/GpQ=="  # Remplacez par votre clé d'accès Picovoice
 
-# Initialisation du modèle Vosk (FR)
-model = vosk.Model("vosk-model-fr")
-rec = vosk.KaldiRecognizer(model, 16000)
+    porcupine = pvporcupine.create(
+        access_key=access_key,
+        keyword_paths=["Dis-Robot_fr_mac_v3_0_0/Dis-Robot_fr_mac_v3_0_0.ppn"],  # Vous pouvez changer ce mot clé ou en ajouter
+        model_path='porcupine_params_fr.pv'
+    )
 
-# Variable pour suivre la détection du mot "robot"
-robot_detected = False
+    def audio_callback(indata, frames, time_info, status):
+        if status:
+            print(f"Status du stream: {status}")
+        pcm = np.squeeze(indata).astype(np.int16)
 
-def callback(indata, frames, time_info, status):
-    global robot_detected
-    if status:
-        print(f"Statut du micro : {status}", flush=True)
+        keyword_index = porcupine.process(pcm)
+        if keyword_index >= 0:
+            print("Mot clé détecté!")
+            SpeechToText.transcribe_voice(duration_limit=10, silence_threshold_sec=2)
 
     try:
-        if rec.AcceptWaveform(bytes(indata)):
-            result = json.loads(rec.Result())
-            text = result.get("text", "").strip()
-
-            if "robot" in text:
-                robot_detected = True
-    except Exception as e:
-        print(f"Erreur dans le callback audio : {e}")
-
-def detect_trigger_word():
-    global robot_detected
-    with sd.RawInputStream(samplerate=16000, blocksize=8000, dtype='int16',
-                           channels=1, callback=callback, device=DEVICE_INDEX):
-        print("Microphone détecté. Dites 'robot' pour commencer.")
-        while not robot_detected:
-            sd.sleep(100)
-    return True
-
-def audioRec(duration=5):
-    ProgressRec()
-    sample_rate = 16000
-    audio = sd.rec(int(duration * sample_rate), samplerate=sample_rate, channels=1, dtype='int16',device=DEVICE_INDEX)
-    sd.wait()  # Attendre la fin de l'enregistrement
-    return audio
-
-def isSilence(audio):
-    # Vérifier si le volume moyen est inférieur au seuil minimum
-    volume_moyen = np.abs(audio).mean()
-    print(f"Volume moyen : {volume_moyen}")
-    return volume_moyen < SEUIL_MINIMUM_VOIX
-
-def ProgressRec():
-    for i in tqdm(range(50), desc="Enregistrement en cours", unit="%", ncols=100):
-        time.sleep(0.1)  
+        with sd.InputStream(
+            channels=1,
+            samplerate=porcupine.sample_rate,
+            blocksize=porcupine.frame_length,
+            dtype='int16',
+            callback=audio_callback
+        ):
+            print("En écoute... Appuyez sur CTRL+C pour arrêter.")
+            while True:
+                pass
+    except KeyboardInterrupt:
+        print("Arrêt du programme.")
+    finally:
+        porcupine.delete()
 
 if __name__ == "__main__":
-    if detect_trigger_word():
-        print("Je vous écoute...")
-        audio_list = []
-        audio = audioRec()
-        text = speech_to_text(audio)
-        print(text)
-        while not isSilence(audio):
-            audio_list.append(audio)
-            audio = audioRec()
-        
-        #for audio in audio_list:
-            #text = speech_to_text(audio)
-            #print(text)
-        
+    main()
