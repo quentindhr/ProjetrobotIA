@@ -2,25 +2,23 @@ import pyttsx3
 import threading
 from queue import Queue
 
-engine = pyttsx3.init()
-speech_queue = Queue()
 
-def _speech_loop():
-    while True:
-        text = speech_queue.get()
-        if text is None:
-            break
-        engine.say(text)
-        engine.runAndWait()
-        speech_queue.task_done()
+engine = None  # Variable globale pour le moteur TTS
 
-# Lance le thread au démarrage
-speech_thread = threading.Thread(target=_speech_loop, daemon=True)
-speech_thread.start()
+def init_tts():
+    global engine
+    engine = pyttsx3.init()
+    engine.setProperty('rate', 180)  # Vitesse de la voix
+    engine.setProperty('volume', 1)  # Volume (0.0 à 1.0)
+    engine.setProperty('voice', 'french')  # Choisir la voix française
+    print("Moteur TTS initialisé.")
+
+    return engine
 
 def speak(text):
-    speech_queue.put(text)
+    global engine
+    engine.say(text)
+    engine.runAndWait()
+    engine.stop()
 
-def stop_speech_loop():
-    speech_queue.put(None)
-    speech_thread.join()  
+init_tts()

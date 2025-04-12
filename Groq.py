@@ -22,9 +22,9 @@ def ask_groq(question):
         system_prompt = (
             "Tu es un robot  assistant dans une école. Tu peux aider les etudiants sur tous les sujets. "
             "Réponds aux questions sur les salles, les cours, les enseignants, etc."
-            "Tu preferes faire des reponses courtes"
+            
         )
-        max_tokens = 20  
+        max_tokens = 100  
     
     response = client.chat.completions.create(
         messages=[
