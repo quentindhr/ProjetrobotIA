@@ -33,7 +33,8 @@ def ask_groq(question):
         ],
         model="llama-3.3-70b-versatile",
         max_tokens=max_tokens,
-        temperature=0
+        temperature=0,
+        verbose=False
     )
     
     response_text = response.choices[0].message.content.strip()
