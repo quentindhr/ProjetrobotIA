@@ -1,4 +1,3 @@
-import gui
 import SpeechToText
 import Groq
 import Text2Speech
