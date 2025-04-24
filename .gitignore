@@ -9,7 +9,7 @@ test.mp3
 /vosk-model-fr
 S2T_Vosk.py
 test.py
-/aimigos
+aimigos
 __pycache__
 Dis-Robot_fr_mac_v3_0_0
 porcupine_params_fr.pv
@@ -31,6 +31,7 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
+# Fichiers volumineux
 aimigos/lib/python3.8/site-packages/llvmlite/binding/libllvmlite.dylib
 aimigos/lib/python3.8/site-packages/numpy/.dylibs/libopenblas64_.0.dylib
 aimigos/lib/python3.8/site-packages/torch/lib/libtorch_cpu.dylib
@@ -47,4 +48,3 @@ aimigos/lib/python3.8/site-packages/torch/lib/libcaffe2_perfkernels_avx2.dylib
 aimigos/lib/python3.8/site-packages/torch/lib/libcaffe2_perfkernels_avx512.dylib
 aimigos/lib/python3.8/site-packages/torch/lib/libcaffe2_perfkernels_avx.dylib
 aimigos/lib/python3.8/site-packages/torch/lib/libcaffe2_observers_gpu.dylib
-
