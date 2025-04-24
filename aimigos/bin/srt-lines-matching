@@ -1,4 +1,4 @@
-#!/Users/quentindeharo/AIMigos/aimigos/bin/python
+#!/Users/quentindeharo/AIMigos/aimigos/bin/python3.11
 
 """Filter subtitles that match or don't match a particular pattern."""
 

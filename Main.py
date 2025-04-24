@@ -12,8 +12,13 @@ KEYWORD_PATH = "Dis-Robot_fr_mac_v3_0_0/Dis-Robot_fr_mac_v3_0_0.ppn"  # Chemin v
 MODEL_PATH = "porcupine_params_fr.pv"  # Chemin vers porcupine_params_fr.pv
 
 class MainApp:
-    def __init__(self, gui_app):
-        self.gui_app = gui_app
+    def __init__(self):
+
+        #gui_app = gui.launch_loading_gui()
+        SpeechToText.loadingModel()
+        Text2Speech.init_tts()
+        #gui.close_loading_gui(gui_app)
+
         self.porcupine = pvporcupine.create(
             access_key=ACCESS_KEY,
             keyword_paths=[KEYWORD_PATH],
@@ -52,6 +57,6 @@ class MainApp:
         Text2Speech.speak(response)
 
 if __name__ == "__main__":
-    gui_app, root = gui.launch_gui()
-    main_app = MainApp(gui_app)
-    root.mainloop()
+    
+    main_app = MainApp()
+    

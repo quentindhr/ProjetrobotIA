@@ -1,4 +1,4 @@
-#!/Users/quentindeharo/AIMigos/aimigos/bin/python
+#!/Users/quentindeharo/AIMigos/aimigos/bin/python3.11
 
 """Process subtitle text content using arbitrary Python code."""
 

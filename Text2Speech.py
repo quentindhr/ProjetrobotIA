@@ -21,4 +21,3 @@ def speak(text):
     engine.runAndWait()
     engine.stop()
 
-init_tts()

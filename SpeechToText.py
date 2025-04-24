@@ -5,8 +5,7 @@ import sounddevice as sd
 import logging
 
 logging.basicConfig(level=logging.DEBUG)
-print("Loading Whisper model...")
-model = whisper.load_model("base")
+model = None
 
 
 AUDIO_DEVICE = 0  # Remplacez par l'index run test pour savoir
@@ -15,6 +14,12 @@ cobra = pvcobra.create(access_key='lT3UyHC0V/4JeDsM4EupWUvMcTpHIdf5pPjvWvBWrGR2C
 silence_duration = 0
 max_silence_frames = 3
 audio_buffer = []
+
+def loadingModel():
+    global model
+    model = whisper.load_model("base")
+    print("Modèle Whisper chargé.")
+    return model
 
 def speech_to_text(audio_data):
     if isinstance(audio_data, np.ndarray):

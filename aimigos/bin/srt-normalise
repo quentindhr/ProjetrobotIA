@@ -1,4 +1,4 @@
-#!/Users/quentindeharo/AIMigos/aimigos/bin/python
+#!/Users/quentindeharo/AIMigos/aimigos/bin/python3.11
 
 """Takes a badly formatted SRT file and outputs a strictly valid one."""
 

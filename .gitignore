@@ -9,6 +9,10 @@ test.mp3
 /vosk-model-fr
 S2T_Vosk.py
 test.py
+/aimigos
+__pycache__
+Dis-Robot_fr_mac_v3_0_0
+porcupine_params_fr.pv
 
 # Fichiers de configuration
 /.env.local
