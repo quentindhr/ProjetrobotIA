@@ -1,23 +1,20 @@
-import pyttsx3
-import threading
-from queue import Queue
+from gtts import gTTS
+import pygame
+import uuid
+import os
 
+def speak(text, lang='fr'):
+    try:
+        filename = f"/tmp/{uuid.uuid4()}.mp3"
+        tts = gTTS(text=text, lang=lang,slow=False)
+        tts.save(filename)
 
-engine = None  # Variable globale pour le moteur TTS
+        pygame.mixer.init()
+        pygame.mixer.music.load(filename)
+        pygame.mixer.music.play()
+        while pygame.mixer.music.get_busy():
+            continue
 
-def init_tts():
-    global engine
-    engine = pyttsx3.init()
-    engine.setProperty('rate', 180)  # Vitesse de la voix
-    engine.setProperty('volume', 1)  # Volume (0.0 à 1.0)
-    engine.setProperty('voice', 'com.apple.speech.synthesis.voice.thomas')  # Choisir la voix française
-    print("Moteur TTS initialisé.")
-
-    return engine
-
-def speak(text):
-    global engine
-    engine.say(text)
-    engine.runAndWait()
-    engine.stop()
-
+        os.remove(filename)
+    except Exception as e:
+        print(f"Erreur lors de la synthèse vocale : {e}")

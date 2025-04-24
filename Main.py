@@ -14,7 +14,7 @@ class MainApp:
     def __init__(self):
         # Chargement des modèles
         SpeechToText.loadingModel()
-        Text2Speech.init_tts()
+        #Text2Speech.init_tts()
 
         # Initialisation de Porcupine
         self.porcupine = pvporcupine.create(
@@ -37,7 +37,7 @@ class MainApp:
                 samplerate=self.porcupine.sample_rate,
                 blocksize=self.porcupine.frame_length,
                 dtype='int16',
-                device=1  # Laisse None pour utiliser le micro par défaut
+                device=0  # Laisse None pour utiliser le micro par défaut
             ) as stream:
                 while True:
                     pcm = stream.read(self.porcupine.frame_length)[0]
