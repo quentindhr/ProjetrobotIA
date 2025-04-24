@@ -10,37 +10,40 @@ VALID_DIRECTIONS = {"à droite", "à gauche", "tout droit", "demi-tour"}
 
 def ask_groq(question):
     """Détermine si la question est liée à une direction et interroge Groq."""
-    
-    if any(word in question.lower() for word in DIRECTION_KEYWORDS):
-        system_prompt = (
-            "Tu es un robot de guidage dans une école. "
-            "Si on te demande une direction, réponds uniquement par : "
-            "'à droite', 'à gauche', 'tout droit' ou 'demi-tour'."
+    try :
+        if any(word in question.lower() for word in DIRECTION_KEYWORDS):
+            system_prompt = (
+                "Tu es un robot de guidage dans une école. "
+                "Si on te demande une direction, réponds uniquement par : "
+                "'à droite', 'à gauche', 'tout droit' ou 'demi-tour'."
+            )
+            max_tokens = 10
+        else:
+            system_prompt = (
+                "Tu es un robot  assistant dans une école. Tu peux aider les etudiants sur tous les sujets. "
+                "Réponds aux questions sur les salles, les cours, les enseignants, etc."
+                
+            )
+            max_tokens = 100  
+        
+        response = client.chat.completions.create(
+            messages=[
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": question}
+            ],
+            model="llama-3.3-70b-versatile",
+            max_tokens=max_tokens,
+            temperature=0
         )
-        max_tokens = 10
-    else:
-        system_prompt = (
-            "Tu es un robot  assistant dans une école. Tu peux aider les etudiants sur tous les sujets. "
-            "Réponds aux questions sur les salles, les cours, les enseignants, etc."
-            
-        )
-        max_tokens = 100  
-    
-    response = client.chat.completions.create(
-        messages=[
-            {"role": "system", "content": system_prompt},
-            {"role": "user", "content": question}
-        ],
-        model="llama-3.3-70b-versatile",
-        max_tokens=max_tokens,
-        temperature=0,
-        verbose=False
-    )
-    
-    response_text = response.choices[0].message.content.strip()
-    
-    if response_text in VALID_DIRECTIONS:
-        response_text = f"➡️ Direction : {response_text}"
+        
+        response_text = response.choices[0].message.content.strip()
+
+        return response_text
+    except Exception as e:
+        return "J'ai rencontré un problème, tu peux essayer de reposer ta question"
+
+    # if response_text in VALID_DIRECTIONS:
+    #     response_text = f"➡️ Direction : {response_text}"
     
      
-    return response_text
+    # return response_text
