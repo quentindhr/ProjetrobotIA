@@ -1,39 +1,46 @@
-import whisper
 import numpy as np
 import pvcobra
 import sounddevice as sd
 import logging
+import queue
+import vosk
+import json
 
 logging.basicConfig(level=logging.DEBUG)
-model = None
 
+AUDIO_DEVICE = 0  # Remplacer par l'index correct
+MODEL_PATH = "model"  # Dossier contenant le modèle Vosk français (ex: 'vosk-model-small-fr-0.22')
 
-AUDIO_DEVICE = 0  # Remplacez par l'index run test pour savoir
-cobra = pvcobra.create(access_key='lT3UyHC0V/4JeDsM4EupWUvMcTpHIdf5pPjvWvBWrGR2CXd62i/GpQ==')  # Remplace par ta clé
+cobra = pvcobra.create(access_key='lT3UyHC0V/4JeDsM4EupWUvMcTpHIdf5pPjvWvBWrGR2CXd62i/GpQ==')
 
 silence_duration = 0
 max_silence_frames = 3
 audio_buffer = []
 
+model = None
+
 def loadingModel():
     global model
-    model = whisper.load_model("base")
-    print("Modèle Whisper chargé.")
+    model = vosk.Model(MODEL_PATH)
+    print("Modèle Vosk chargé.")
     return model
 
 def speech_to_text(audio_data):
     if isinstance(audio_data, np.ndarray):
-        audio = audio_data.flatten().astype(np.float32) / 32768.0
+        audio = audio_data.flatten().astype(np.int16)
     else:
         raise ValueError("Le format de l'audio n'est pas reconnu (attendu: np.ndarray)")
 
-    # Conversion Whisper-friendly
-    audio = whisper.pad_or_trim(audio)
-    
-    # Transcription rapide optimisée
-    result = model.transcribe(audio, fp16 = False, language="fr", task="transcribe", verbose=True)
-    return result["text"]
+    recognizer = vosk.KaldiRecognizer(model, cobra.sample_rate)
+    recognizer.SetWords(True)
 
+    if recognizer.AcceptWaveform(audio_data.tobytes()):
+        result = recognizer.Result()
+        text = json.loads(result)["text"]
+    else:
+        text = json.loads(recognizer.FinalResult())["text"]
+
+    return text
 
 def transcribe_voice(duration_limit=10, silence_threshold_sec=2):
     sample_rate = cobra.sample_rate
@@ -82,7 +89,6 @@ def transcribe_voice(duration_limit=10, silence_threshold_sec=2):
     else:
         return "[Aucune voix détectée]"
 
-
 def is_voiced(pcm):
     score = cobra.process(pcm)
     #print(f"Score Cobra : {score:.2f}")
@@ -94,8 +100,7 @@ def is_silenced():
     #print("... silence ...")
     return silence_duration >= max_silence_frames
 
-
-
 if __name__ == "__main__":
+    loadingModel()
     text = transcribe_voice()
     print("Transcription :", text)
