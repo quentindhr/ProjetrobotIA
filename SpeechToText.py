@@ -8,8 +8,8 @@ import json
 
 logging.basicConfig(level=logging.DEBUG)
 
-AUDIO_DEVICE = 0  # Remplacer par l'index correct
-MODEL_PATH = "model"  # Dossier contenant le modèle Vosk français (ex: 'vosk-model-small-fr-0.22')
+AUDIO_DEVICE = 1  # Remplacer par l'index correct
+MODEL_PATH = "/Users/quentindeharo/AIMigos/vosk-model-fr-0.6-linto-2.2.0"  # Dossier contenant le modèle Vosk français (ex: 'vosk-model-small-fr-0.22')
 
 cobra = pvcobra.create(access_key='lT3UyHC0V/4JeDsM4EupWUvMcTpHIdf5pPjvWvBWrGR2CXd62i/GpQ==')
 

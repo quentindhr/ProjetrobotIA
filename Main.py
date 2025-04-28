@@ -37,7 +37,7 @@ class MainApp:
                 samplerate=self.porcupine.sample_rate,
                 blocksize=self.porcupine.frame_length,
                 dtype='int16',
-                device=0  # Laisse None pour utiliser le micro par défaut
+                device=1  # Laisse None pour utiliser le micro par défaut
             ) as stream:
                 while True:
                     pcm = stream.read(self.porcupine.frame_length)[0]

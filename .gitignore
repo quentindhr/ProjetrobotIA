@@ -14,6 +14,8 @@ __pycache__
 Dis-Robot_fr_mac_v3_0_0
 porcupine_params_fr.pv
 /Image
+vosk-model-fr-large
+vosk-model-fr-0.6-linto-2.2.0
 
 # Fichiers de configuration
 /.env.local
