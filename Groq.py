@@ -29,6 +29,14 @@ FALLBACK_RESPONSES = [
     "Je ne suis pas sûr d'avoir compris. Essayons encore !"
 ]
 
+# ENREFLEXION_RESPONSES = [
+#     "Je réfléchis à ta question...",
+#     "Un instant, je cherche la réponse...",
+#     "Laisse-moi un moment pour trouver la meilleure réponse...",
+#     "Bonne question mon chef",
+#     "Hmmmmmmm attend je reflechis"
+# ]
+
 def ask_groq(question):
     """Détermine si la question est liée à une direction et interroge Groq."""
     question = question.strip().lower()  # Nettoyage basique de l'entrée
@@ -44,7 +52,7 @@ def ask_groq(question):
         max_tokens = 10 if is_direction else 100
         top_p = 0.5  # Limite encore plus les réponses imprévues
 
-        Text2Speech.speak("Je réfléchis...")  # Feedback utilisateur pendant génération
+          # Feedback utilisateur pendant génération
 
         # Appel API
         response = client.chat.completions.create(

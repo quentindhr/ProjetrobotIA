@@ -2,14 +2,23 @@ import numpy as np
 import pvcobra
 import sounddevice as sd
 import logging
-import queue
 import vosk
 import json
+import random
+import Text2Speech
 
 logging.basicConfig(level=logging.DEBUG)
 
 AUDIO_DEVICE = 0  # Remplacer par l'index correct
 MODEL_PATH = "/Users/quentindeharo/AIMigos/vosk-model-fr-0.6-linto-2.2.0"  # Dossier contenant le modèle Vosk français (ex: 'vosk-model-small-fr-0.22')
+
+ENREFLEXION_RESPONSES = [
+    "Je réfléchis à ta question...",
+    "Un instant, je cherche la réponse...",
+    "Laisse-moi un moment pour trouver la meilleure réponse...",
+    "Bonne question mon chef",
+    "Hmmmmmmm attend je reflechis"
+]
 
 cobra = pvcobra.create(access_key='lT3UyHC0V/4JeDsM4EupWUvMcTpHIdf5pPjvWvBWrGR2CXd62i/GpQ==')
 
@@ -66,6 +75,7 @@ def transcribe_voice(duration_limit=10, silence_threshold_sec=2):
             silence_counter += 1
             if silence_counter > silence_reset_threshold:
                 print("Silence prolongé détecté. Fin de l'enregistrement.")
+                reflexion()
                 raise sd.CallbackStop()
 
     try:
@@ -99,6 +109,10 @@ def is_silenced():
     silence_duration += 1
     #print("... silence ...")
     return silence_duration >= max_silence_frames
+
+
+def reflexion():
+    Text2Speech.speak(random.choice(ENREFLEXION_RESPONSES))
 
 if __name__ == "__main__":
     loadingModel()
