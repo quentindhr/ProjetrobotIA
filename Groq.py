@@ -2,6 +2,7 @@
 
 from groq import Groq
 import random
+import Text2Speech
 
 # Initialiser le client Groq
 client = Groq(api_key="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")
@@ -43,7 +44,7 @@ def ask_groq(question):
         max_tokens = 10 if is_direction else 100
         top_p = 0.5  # Limite encore plus les réponses imprévues
 
-        print("🤖 Je réfléchis...")  # Feedback utilisateur pendant génération
+        Text2Speech.speak("Je réfléchis...")  # Feedback utilisateur pendant génération
 
         # Appel API
         response = client.chat.completions.create(
@@ -51,7 +52,7 @@ def ask_groq(question):
                 {"role": "system", "content": system_prompt},
                 {"role": "user", "content": question}
             ],
-            model="llama-3-70b-8192",
+            model="llama3-70b-8192",
             max_tokens=max_tokens,
             temperature=0,
             top_p=top_p
